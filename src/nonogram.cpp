@@ -140,8 +140,59 @@ void nonogram::try_solving() const
 {
   vector<int> sol(width*height,UNKNOWN);
   
+  struct line_t{
+    vector<int> indexes;
+    vector<int> seq;
+    int max_id;
+  };
   
-  // TODO solve it!
+  
+  
+  vector<line_t> lines;
+  
+  for(int y=0;y<height;++y){
+    line_t line;
+    for(int x=0;x<width;++x){
+      line.indexes.push_back(y*width+x);
+    }
+    line.seq = get_row_seq(y);
+    line.max_id = height;
+    lines.push_back(line);
+  }
+  for(int x=0;x<width;++x){
+    line_t line;
+    for(int y=0;y<height;++y){
+      line.indexes.push_back(y*width+x);
+    }
+    line.seq = get_col_seq(x);
+    line.max_id = height;
+    lines.push_back(line);
+  }
+  
+  bool change;
+  do{
+    change = false;
+    for(const auto& l: lines){
+      combinations c(l.seq,l.max_id);
+      vector<int> given;
+      for(const auto& i: l.indexes){
+        given.push_back(fields[i]);
+      }
+      vector<int> solved = c.try_solving(given,1000);
+      int s = 0;
+      for(const auto& i: l.indexes){
+        if(fields[i] != solved[s]){
+          fields[i] = solved[s];
+          change = true;
+        }
+        ++s;
+      }
+    }
+  }while(change);
+  
+  
+  
+  
   
   for(int y=0;y<height;++y){
     for(int x=0;x<width;++x){

@@ -3,6 +3,7 @@
 
 #include "includes.hpp"
 #include "svg.hpp"
+#include "combinations.hpp"
 
 using namespace std;
 
