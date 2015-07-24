@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <cassert>
 
 #include "nonogram.hpp"
 
@@ -18,4 +19,11 @@ public:
   combinations(const vector<int>& sequence,int _max_id);
   
   bool next(vector<int>* out);
+  
+  vector<int> try_solving(const vector<int>& given,unsigned max_tries);
 };
+
+
+bool combi_match(const vector<int>& lhs,const vector<int>& rhs);
+
+void assign_intersection_lhs(vector<int>& lhs,const vector<int>& rhs);

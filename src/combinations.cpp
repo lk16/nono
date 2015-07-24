@@ -46,3 +46,69 @@ bool combinations::next(vector<int>* out)
   
   return true;
 }
+
+vector<int> combinations::try_solving(const vector<int>& given,unsigned max_tries)
+{
+  unsigned tries = 0;
+  
+  assert(given.size() == seq.size());
+  
+  vector<int> out(given);
+  
+  vector<int> combi;
+  
+  vector<int> intersection; 
+  bool first = true;
+  
+  
+  while(next(&combi)){
+    if(combi_match(combi,given)){
+      if(first){
+        intersection = combi;
+        first = false;
+      }
+      else{
+        assign_intersection_lhs(intersection,combi);
+      }
+    }
+    ++tries;
+    if(tries >= max_tries){
+      return out;
+    }
+  }
+  
+  return intersection;
+}
+
+bool combi_match(const vector<int>& lhs, const vector<int>& rhs)
+{
+  vector<int>::const_iterator lit,rit;
+  lit = lhs.begin();
+  rit = rhs.begin();
+  while(lit != lhs.end()){
+    if(*lit != *rit && *lit!=-1 && *rit!=-1){
+      return false;
+    }
+    ++lit;
+    ++rit;
+  }
+  return true;
+}
+
+void assign_intersection_lhs(vector<int>& lhs, const vector<int>& rhs)
+{
+  vector<int>::const_iterator rit;
+  vector<int>::iterator lit;
+  lit = lhs.begin();
+  rit = rhs.begin();
+  while(lit != lhs.end()){
+    if(*lit != *rit){
+      *lit = -1;
+    }
+    ++lit;
+    ++rit;
+  }
+}
+
+
+
