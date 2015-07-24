@@ -19,21 +19,23 @@ int main(){
   
   
   
-  vector<int> seq = {2,3,5};
-  combinations combi(seq,16);
-  vector<int> out;
-  while(combi.next(&out)){
-    for(auto x: out){
-      if(x==nonogram::BLACK){
-        cout << "@";
-      }
-      else{
-        cout << " ";
-      }
-    }
-    cout << '\n';
-  }
+  vector<int> seq = {3};
+  combinations combi(seq,5);
   
+  vector<int> given = {-1,1,-1,-1,-1};
+  
+  
+  
+  vector<int> out = combi.try_solving(given,1000);
+  for(auto x: out){
+    if(x==nonogram::BLACK){
+      cout << "@";
+    }
+    else{
+      cout << "-";
+    }
+  }
+  cout << '\n';
   
   return 0;
 }

@@ -51,7 +51,7 @@ vector<int> combinations::try_solving(const vector<int>& given,unsigned max_trie
 {
   unsigned tries = 0;
   
-  assert(given.size() == seq.size());
+  assert(given.size() == (unsigned)max_id);
   
   vector<int> out(given);
   
