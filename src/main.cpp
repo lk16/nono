@@ -14,7 +14,7 @@ int main(){
   nono.save_as_svg("puzzle.svg",false);
   nono.save_as_svg("solution.svg",true);
   
-  
+#if 0  
   
   vector<int> seq = {3};
   combinations combi(seq,5);
@@ -33,6 +33,9 @@ int main(){
     }
   }
   cout << '\n';
-  
+#endif
+
+  nono.try_solving();
+
   return 0;
 }

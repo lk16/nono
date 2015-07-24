@@ -138,5 +138,17 @@ void nonogram::save_as_svg(const string& filename,bool solved) const
 
 void nonogram::try_solving() const
 {
-  vector<int>(width*height,-1);
+  vector<int> sol(width*height,UNKNOWN);
+  
+  
+  // TODO solve it!
+  
+  for(int y=0;y<height;++y){
+    for(int x=0;x<width;++x){
+      cout.fill(' ');
+      cout << setw(2) << sol[y*width+x] << ' ';
+    }
+    cout << endl;
+  }
+  
 }
