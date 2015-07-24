@@ -12,7 +12,8 @@ int main(){
 
   nonogram nono(10,10);
   nono.randomise();
-  nono.save_as_svg("bla.svg");
+  nono.save_as_svg("puzzle.svg",false);
+  nono.save_as_svg("solution.svg",true);
   
   return 0;
 }

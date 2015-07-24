@@ -12,7 +12,7 @@ nonogram::~nonogram(){
 
 void nonogram::randomise(){
   for(int i=0;i<width*height;++i){
-    fields[i] = rand() % 2;
+    fields[i] = (rand() % 5 >= 2) ? 1 : 0;
   }
 }
   
@@ -56,7 +56,7 @@ vector<int> nonogram::get_row_seq(int y) const
   return res;
 }
 
-void nonogram::save_as_svg(const string& filename) const
+void nonogram::save_as_svg(const string& filename,bool solved) const
 {
   const std::string style = "style=\"stroke:rgb(0,0,0);stroke-width:1\"";
   
@@ -92,24 +92,26 @@ void nonogram::save_as_svg(const string& filename) const
   file << svg_header(TOTAL_WIDTH,TOTAL_HEIGHT);
   
   
-  for(int i=0;i<=10;++i){
+  for(int i=0;i<=width;++i){
     int x = FIELD_X_START + SQUARE_SIZE*i;
     file << svg_line(x,0,x,SEQ_HEIGHT+FIELD_HEIGHT,style);
   }
     
-  for(int i=0;i<=10;++i){
+  for(int i=0;i<=height;++i){
     int y = FIELD_Y_START + SQUARE_SIZE*i;
     file << svg_line(0,y,SEQ_WIDTH+FIELD_WIDTH,y,style);
   }
   
-  for(int i=0;i<100;++i){
-    int x = FIELD_X_START + SQUARE_SIZE*(i%width);
-    int y = FIELD_Y_START + SQUARE_SIZE*(i/width);
-    if(fields[i] == 1){
-      file << svg_rectangle(x,y,SQUARE_SIZE,SQUARE_SIZE,"style=\"fill:black\"");
+  if(solved){
+    for(int i=0;i<width*height;++i){
+      int x = FIELD_X_START + SQUARE_SIZE*(i%width);
+      int y = FIELD_Y_START + SQUARE_SIZE*(i/width);
+      if(fields[i] == BLACK){
+        file << svg_rectangle(x,y,SQUARE_SIZE,SQUARE_SIZE,"style=\"fill:black\"");
+      }
     }
   }
-
+  
   for(int r=0;r<height;++r){
     vector<int> seq = get_row_seq(r);
     for(unsigned i=0;i<seq.size();++i){
