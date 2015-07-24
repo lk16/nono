@@ -16,7 +16,9 @@ string svg_rectangle(int x,int y,int width,int height, const string& tags){
 
 string svg_header(int width, int height)
 {
-  return string("<svg width=\"") + to_str<int>(width) + "\" height=\"" + to_str<int>(height) + "\">\n";
+  string res = "<svg width=\"" + to_str<int>(width) + "\" height=\"" + to_str<int>(height) + "\">\n";
+  res += svg_rectangle(0,0,width,height,"style=\"fill:white\"");
+  return res;
 }
 
 string svg_footer()
