@@ -40,7 +40,7 @@ bool combinations::next(vector<int>* out)
   out->assign(max_id,0);
   for(unsigned i=0;i<offset.size();++i){
     for(int j=0;j<seq[i];++j){
-      (*out)[offset[i]+j] = nonogram::BLACK;
+      (*out)[offset[i]+j] = BLACK;
     }
   }
   
@@ -86,7 +86,7 @@ bool combi_match(const vector<int>& lhs, const vector<int>& rhs)
   lit = lhs.begin();
   rit = rhs.begin();
   while(lit != lhs.end()){
-    if(*lit != *rit && *lit!=-1 && *rit!=-1){
+    if(*lit != *rit && *lit!=UNKNOWN && *rit!=UNKNOWN){
       return false;
     }
     ++lit;
@@ -103,7 +103,7 @@ void assign_intersection_lhs(vector<int>& lhs, const vector<int>& rhs)
   rit = rhs.begin();
   while(lit != lhs.end()){
     if(*lit != *rit){
-      *lit = -1;
+      *lit = UNKNOWN;
     }
     ++lit;
     ++rit;

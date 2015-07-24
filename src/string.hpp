@@ -1,11 +1,6 @@
 #pragma once
 
-
-#include <cstdio>
-#include <iomanip>
-#include <sstream>
-#include <string>
-#include <vector>
+#include "includes.hpp"
 
 template<class T>
 inline std::string to_str(T x){

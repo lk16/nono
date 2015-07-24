@@ -131,5 +131,12 @@ void nonogram::save_as_svg(const string& filename,bool solved) const
   }
     
   file << svg_footer();
-  
+  file.close();
+}
+
+
+
+void nonogram::try_solving() const
+{
+  vector<int>(width*height,-1);
 }

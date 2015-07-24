@@ -1,7 +1,6 @@
 #pragma once
 
-#include <iostream>
-
+#include "includes.hpp"
 #include "string.hpp"
 
 using namespace std;

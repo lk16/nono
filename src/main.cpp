@@ -1,7 +1,4 @@
-#include <iostream>
-#include <algorithm>
-#include <vector>
-
+#include "includes.hpp"
 #include "nonogram.hpp"
 #include "combinations.hpp"
 
@@ -28,7 +25,7 @@ int main(){
   
   vector<int> out = combi.try_solving(given,1000);
   for(auto x: out){
-    if(x==nonogram::BLACK){
+    if(x==BLACK){
       cout << "@";
     }
     else{

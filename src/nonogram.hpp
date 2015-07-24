@@ -1,18 +1,12 @@
 #pragma once
 
-#include <vector>
-#include <cstdlib>
-#include <string>
-#include <fstream>
 
+#include "includes.hpp"
 #include "svg.hpp"
 
 using namespace std;
 
 struct nonogram{
-  static const int WHITE = 0;
-  static const int UNKNONWN = -1;
-  static const int BLACK = 1;
   
   int width,height;
   int* fields;
@@ -32,6 +26,8 @@ struct nonogram{
   vector<int> get_row_seq(int y) const;
   
   void save_as_svg(const string& filename,bool solved) const;
+  
+  void try_solving() const;
 };
 
 
