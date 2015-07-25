@@ -186,14 +186,14 @@ void nonogram::try_solving() const
     line.seq = get_row_seq(y);
     lines.push_back(line);
   }
-  /*for(int x=0;x<width;++x){
+  for(int x=0;x<width;++x){
     line_t line;
     for(int y=0;y<height;++y){
       line.indexes.push_back(y*width+x);
     }
     line.seq = get_col_seq(x);
     lines.push_back(line);
-  }*/
+  }
   
   for(const auto& l: lines){
     for(auto i: l.indexes){

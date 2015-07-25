@@ -19,7 +19,7 @@ bool combinations::next(vector<int>* out)
     int sum = 0;
     while(true){
       sum += seq[move] + 1;
-      if(offset[move] + sum + 1 < (max_id+1)){
+      if(offset[move] + sum - 1 < max_id){
         break;
       }
       --move; 
