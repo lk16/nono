@@ -99,7 +99,7 @@ void nonogram::save_as_svg(const string& filename,bool solved) const
     }
   }
   else{
-    file << svg_rectangle(SEQ_WIDTH,SEQ_HEIGHT,FIELD_WIDTH,FIELD_HEIGHT,"style=\"fill:rgb(180,180,180)\"");
+    file << svg_rectangle(SEQ_WIDTH,SEQ_HEIGHT,FIELD_WIDTH,FIELD_HEIGHT,"style=\"fill:rgb(200,200,200)\"");
   }
   
     
