@@ -176,7 +176,7 @@ void nonogram::try_solving() const
       combinations c(l.seq,l.max_id);
       vector<int> given;
       for(const auto& i: l.indexes){
-        given.push_back(fields[i]);
+        given.push_back(sol[i]);
       }
       vector<int> solved = c.try_solving(given,1000);
       int s = 0;

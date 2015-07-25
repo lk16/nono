@@ -74,6 +74,7 @@ vector<int> combinations::try_solving(const vector<int>& given,unsigned max_trie
   
   
   while(next(&combi)){
+    assert(!combi.empty());
     if(combi_match(combi,given)){
       if(first){
         intersection = combi;
@@ -88,12 +89,13 @@ vector<int> combinations::try_solving(const vector<int>& given,unsigned max_trie
       return given;
     }
   }
-  
+  assert(!intersection.empty());
   return intersection;
 }
 
 bool combi_match(const vector<int>& lhs, const vector<int>& rhs)
 {
+  assert(lhs.size()==rhs.size());
   vector<int>::const_iterator lit,rit;
   lit = lhs.begin();
   rit = rhs.begin();
@@ -109,6 +111,7 @@ bool combi_match(const vector<int>& lhs, const vector<int>& rhs)
 
 void assign_intersection_lhs(vector<int>& lhs, const vector<int>& rhs)
 {
+  assert(lhs.size()==rhs.size());
   vector<int>::const_iterator rit;
   vector<int>::iterator lit;
   lit = lhs.begin();
