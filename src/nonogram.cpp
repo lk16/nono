@@ -134,6 +134,35 @@ void nonogram::save_as_svg(const string& filename,bool solved) const
   file.close();
 }
 
+void print_table(const vector<int>& tab,int height,int width){
+    
+  map<int,string> printed;
+  printed[UNKNOWN] = " ";
+  printed[BLACK] = "@";
+  printed[WHITE] = ".";
+
+  
+  cout << "+-";
+  for(int x=0;x<width;++x){
+    cout << "--";
+  }
+  cout << "+\n";
+  
+  for(int y=0;y<height;++y){
+    cout << "| ";
+    for(int x=0;x<width;++x){
+      cout << printed[tab[y*width+x]] << ' ';
+    }
+    cout << "|\n";
+  }
+  
+  cout << "+-";
+  for(int x=0;x<width;++x){
+    cout << "--";
+  }
+  cout << "+\n";
+}
+
 
 
 void nonogram::try_solving() const
@@ -143,7 +172,6 @@ void nonogram::try_solving() const
   struct line_t{
     vector<int> indexes;
     vector<int> seq;
-    int max_id;
   };
   
   
@@ -156,33 +184,41 @@ void nonogram::try_solving() const
       line.indexes.push_back(y*width+x);
     }
     line.seq = get_row_seq(y);
-    line.max_id = height;
     lines.push_back(line);
   }
-  for(int x=0;x<width;++x){
+  /*for(int x=0;x<width;++x){
     line_t line;
     for(int y=0;y<height;++y){
       line.indexes.push_back(y*width+x);
     }
     line.seq = get_col_seq(x);
-    line.max_id = height;
     lines.push_back(line);
+  }*/
+  
+  for(const auto& l: lines){
+    for(auto i: l.indexes){
+      cout << i << ' ';
+    }
+    cout << '\n';
   }
+  
+  
+  
   
   bool change;
   do{
     change = false;
     for(const auto& l: lines){
-      combinations c(l.seq,l.max_id);
+      combinations c(l.seq,l.indexes.size());
       vector<int> given;
       for(const auto& i: l.indexes){
         given.push_back(sol[i]);
       }
-      vector<int> solved = c.try_solving(given,1000);
+      vector<int> solved_line = c.try_solving(given,1000);
       int s = 0;
       for(const auto& i: l.indexes){
-        if(sol[i] != solved[s]){
-          sol[i] = solved[s];
+        if(sol[i] != solved_line[s]){
+           sol[i] = solved_line[s];
           change = true;
         }
         ++s;
@@ -191,21 +227,13 @@ void nonogram::try_solving() const
   }while(change);
   
   
-  
-  
-  
-  for(int y=0;y<height;++y){
-    for(int x=0;x<width;++x){
-      cout.fill(' ');
-      cout << setw(2) << sol[y*width+x] << ' ';
-    }
-    cout << endl;
-  }
-  
+  print_table(sol,height,width);
+
   
   for(int i=0;i<width*height;++i){
-    if(sol[i] != fields[i]){
+    if(sol[i] != fields[i] && sol[i]!=UNKNOWN){
       cout << "found inequality at (" << i%width << "," << i/width << ")\n";
+      cout << sol[i] << " != " << fields[i] << '\n';
     }
   }
   
