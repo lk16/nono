@@ -9,10 +9,10 @@ int main(){
   
   srand(time(NULL));
 
-  nonogram nono(8,4);
+  nonogram nono(20,20);
   nono.randomise();
   nono.make_solvable();
-  nono.print();
+  //nono.print();
   nono.save_as_svg("puzzle.svg",false);
   nono.save_as_svg("solution.svg",true);
 
