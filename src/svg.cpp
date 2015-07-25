@@ -16,7 +16,8 @@ string svg_rectangle(int x,int y,int width,int height, const string& tags){
 
 string svg_header(int width, int height)
 {
-  string res = "<svg width=\"" + to_str<int>(width) + "\" height=\"" + to_str<int>(height) + "\">\n";
+  string res = "<svg width=\"" + to_str<int>(width) + "\" height=\"" + to_str<int>(height) + "\"";
+  res += " xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n";
   res += svg_rectangle(0,0,width,height,"style=\"fill:white\"");
   return res;
 }

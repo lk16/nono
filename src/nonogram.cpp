@@ -116,7 +116,7 @@ void nonogram::save_as_svg(const string& filename,bool solved) const
     vector<int> seq = get_row_seq(r);
     for(unsigned i=0;i<seq.size();++i){
       int x = SEQ_WIDTH - (SQUARE_SIZE/2) - (SQUARE_SIZE*i);
-      int y = SEQ_HEIGHT + (SQUARE_SIZE/2) + (SQUARE_SIZE*r);
+      int y = SEQ_HEIGHT  + (SQUARE_SIZE*r) + (SQUARE_SIZE*3/4);
       file << svg_text_centered(x,y,to_str<int>(seq[seq.size()-i-1]));
     }
   }
@@ -125,7 +125,7 @@ void nonogram::save_as_svg(const string& filename,bool solved) const
     vector<int> seq = get_col_seq(c);
     for(unsigned i=0;i<seq.size();++i){
       int x = SEQ_WIDTH + (SQUARE_SIZE/2) + (SQUARE_SIZE*c);
-      int y = SEQ_HEIGHT - (SQUARE_SIZE/2) - (SQUARE_SIZE*i);
+      int y = SEQ_HEIGHT - (SQUARE_SIZE/4) - (SQUARE_SIZE*i);
       file << svg_text_centered(x,y,to_str<int>(seq[seq.size()-i-1]));
     }
   }
