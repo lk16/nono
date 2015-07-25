@@ -9,33 +9,12 @@ int main(){
   
   srand(time(NULL));
 
-  nonogram nono(10,10);
+  nonogram nono(25,25);
   nono.randomise();
+  nono.make_solvable();
+  nono.print();
   nono.save_as_svg("puzzle.svg",false);
   nono.save_as_svg("solution.svg",true);
-  
-#if 0  
-  
-  vector<int> seq = {3};
-  combinations combi(seq,5);
-  
-  vector<int> given = {-1,1,-1,-1,-1};
-  
-  
-  
-  vector<int> out = combi.try_solving(given,1000);
-  for(auto x: out){
-    if(x==BLACK){
-      cout << "@";
-    }
-    else{
-      cout << "-";
-    }
-  }
-  cout << '\n';
-#endif
-
-  nono.try_solving();
 
   return 0;
 }

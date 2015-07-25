@@ -10,14 +10,14 @@ using namespace std;
 struct nonogram{
   
   int width,height;
-  int* fields;
+  vector<int> fields;
   // indexes:
   // 0 1 2
   // 3 4 5
   // 6 7 8 ..
   
   nonogram(int h,int w);
-  ~nonogram();
+  ~nonogram() = default;
   
   void randomise();
   
@@ -28,7 +28,14 @@ struct nonogram{
   
   void save_as_svg(const string& filename,bool solved) const;
   
-  void try_solving() const;
+  void try_solving(vector<int>& sol) const;
+  
+  void make_solvable();
+  
+  void print() const;
+  
+  
 };
 
 
+void print_table(const vector<int>& tab,int height,int width);

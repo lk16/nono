@@ -1,14 +1,11 @@
 #include "nonogram.hpp"
 
 nonogram::nonogram(int h,int w){
-  fields = new int[w*h];
+  fields.assign(w*h,WHITE);
   width = w;
   height = h;
 }
 
-nonogram::~nonogram(){
-  delete fields;
-}
 
 void nonogram::randomise(){
   for(int i=0;i<width*height;++i){
@@ -58,7 +55,8 @@ vector<int> nonogram::get_row_seq(int y) const
 
 void nonogram::save_as_svg(const string& filename,bool solved) const
 {
-  const std::string style = "style=\"stroke:rgb(0,0,0);stroke-width:1\"";
+  const std::string thinline = "style=\"stroke:black;stroke-width:1\"";
+  const std::string fatline = "style=\"stroke:black;stroke-width:3\"";
   
   
   
@@ -90,27 +88,32 @@ void nonogram::save_as_svg(const string& filename,bool solved) const
   
   ofstream file(filename);
   file << svg_header(TOTAL_WIDTH,TOTAL_HEIGHT);
-  
-  
-  for(int i=0;i<=width;++i){
-    int x = FIELD_X_START + SQUARE_SIZE*i;
-    file << svg_line(x,0,x,SEQ_HEIGHT+FIELD_HEIGHT,style);
-  }
-    
-  for(int i=0;i<=height;++i){
-    int y = FIELD_Y_START + SQUARE_SIZE*i;
-    file << svg_line(0,y,SEQ_WIDTH+FIELD_WIDTH,y,style);
-  }
-  
+
   if(solved){
     for(int i=0;i<width*height;++i){
-      int x = FIELD_X_START + SQUARE_SIZE*(i%width);
-      int y = FIELD_Y_START + SQUARE_SIZE*(i/width);
       if(fields[i] == BLACK){
+        int x = FIELD_X_START + SQUARE_SIZE*(i%width);
+        int y = FIELD_Y_START + SQUARE_SIZE*(i/width);
         file << svg_rectangle(x,y,SQUARE_SIZE,SQUARE_SIZE,"style=\"fill:black\"");
       }
     }
   }
+  else{
+    file << svg_rectangle(SEQ_WIDTH,SEQ_HEIGHT,FIELD_WIDTH,FIELD_HEIGHT,"style=\"fill:rgb(180,180,180)\"");
+  }
+  
+    
+  for(int i=0;i<=width;++i){
+    int x = FIELD_X_START + SQUARE_SIZE*i;
+    file << svg_line(x,0,x,SEQ_HEIGHT+FIELD_HEIGHT,(i%5==0) ? fatline : thinline);
+  }
+    
+  for(int i=0;i<=height;++i){
+    int y = FIELD_Y_START + SQUARE_SIZE*i;
+    file << svg_line(0,y,SEQ_WIDTH+FIELD_WIDTH,y,(i%5==0) ? fatline : thinline);
+  }
+
+  
   
   for(int r=0;r<height;++r){
     vector<int> seq = get_row_seq(r);
@@ -133,6 +136,12 @@ void nonogram::save_as_svg(const string& filename,bool solved) const
   file << svg_footer();
   file.close();
 }
+
+void nonogram::print() const
+{
+  print_table(fields,height,width);
+}
+
 
 void print_table(const vector<int>& tab,int height,int width){
     
@@ -165,9 +174,9 @@ void print_table(const vector<int>& tab,int height,int width){
 
 
 
-void nonogram::try_solving() const
+void nonogram::try_solving(vector<int>& sol) const
 {
-  vector<int> sol(width*height,UNKNOWN);
+  sol.assign(width*height,UNKNOWN);
   
   struct line_t{
     vector<int> indexes;
@@ -195,16 +204,6 @@ void nonogram::try_solving() const
     lines.push_back(line);
   }
   
-  for(const auto& l: lines){
-    for(auto i: l.indexes){
-      cout << i << ' ';
-    }
-    cout << '\n';
-  }
-  
-  
-  
-  
   bool change;
   do{
     change = false;
@@ -226,10 +225,6 @@ void nonogram::try_solving() const
     }
   }while(change);
   
-  
-  print_table(sol,height,width);
-
-  
   for(int i=0;i<width*height;++i){
     if(sol[i] != fields[i] && sol[i]!=UNKNOWN){
       cout << "found inequality at (" << i%width << "," << i/width << ")\n";
@@ -237,4 +232,36 @@ void nonogram::try_solving() const
     }
   }
   
+}
+
+void nonogram::make_solvable()
+{
+  vector<int> solution;
+  bool solved;
+  const int max_tries = 30;
+  
+  while(true){
+    randomise();
+    int tries_left = max_tries;
+    while(tries_left>0){
+      --tries_left;
+      solved = true;
+      try_solving(solution);
+      for(int i=0;i<width*height;++i){
+        if(solution[i]==UNKNOWN){
+          solved = false;
+          break;
+        }
+      }
+      if(solved){
+        return;
+      }
+      for(int i=0;i<width*height;++i){
+        if(solution[i]==UNKNOWN){
+          solution[i] = rand() % 2;
+        }
+      }
+      fields = solution;
+    }
+  }
 }
