@@ -37,7 +37,7 @@ bool combinations::next(vector<int>* out)
     first_result = false;
   }
   
-  out->assign(max_id,0);
+  out->assign(max_id,WHITE);
   for(unsigned i=0;i<offset.size();++i){
     for(int j=0;j<seq[i];++j){
       (*out)[offset[i]+j] = BLACK;
@@ -49,11 +49,23 @@ bool combinations::next(vector<int>* out)
 
 vector<int> combinations::try_solving(const vector<int>& given,unsigned max_tries)
 {
+  {
+    bool found_all = true;
+    for(const auto& x:given){
+      if(x==UNKNOWN){
+        found_all = false;
+        break;
+      }
+    }
+    if(found_all){
+      return given;
+    }
+  }
+  
+  
   unsigned tries = 0;
   
   assert(given.size() == (unsigned)max_id);
-  
-  vector<int> out(given);
   
   vector<int> combi;
   
@@ -73,7 +85,7 @@ vector<int> combinations::try_solving(const vector<int>& given,unsigned max_trie
     }
     ++tries;
     if(tries >= max_tries){
-      return out;
+      return given;
     }
   }
   

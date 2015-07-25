@@ -181,8 +181,8 @@ void nonogram::try_solving() const
       vector<int> solved = c.try_solving(given,1000);
       int s = 0;
       for(const auto& i: l.indexes){
-        if(fields[i] != solved[s]){
-          fields[i] = solved[s];
+        if(sol[i] != solved[s]){
+          sol[i] = solved[s];
           change = true;
         }
         ++s;
@@ -200,6 +200,13 @@ void nonogram::try_solving() const
       cout << setw(2) << sol[y*width+x] << ' ';
     }
     cout << endl;
+  }
+  
+  
+  for(int i=0;i<width*height;++i){
+    if(sol[i] != fields[i]){
+      cout << "found inequality at (" << i%width << "," << i/width << ")\n";
+    }
   }
   
 }
