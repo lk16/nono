@@ -5,9 +5,7 @@
 #include "svg.hpp"
 #include "combinations.hpp"
 
-using namespace std;
-
-struct nonogram{
+class nonogram{
   
   int width,height;
   vector<int> fields;
@@ -16,10 +14,15 @@ struct nonogram{
   // 3 4 5
   // 6 7 8 ..
   
+  void try_solving(vector<int>& sol) const;
+  
+public:
+  
   nonogram(int h,int w);
   ~nonogram() = default;
   
-  void randomise();
+  void init_randomised();
+  void init_clustered();
   
   
   
@@ -28,7 +31,7 @@ struct nonogram{
   
   void save_as_svg(const string& filename,bool solved) const;
   
-  void try_solving(vector<int>& sol) const;
+
   
   void make_solvable();
   

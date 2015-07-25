@@ -3,10 +3,6 @@
 #include "includes.hpp"
 #include "nonogram.hpp"
 
-using namespace std;
-
-
-
 class combinations{
 
   

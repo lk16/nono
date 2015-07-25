@@ -3,10 +3,6 @@
 #include "includes.hpp"
 #include "string.hpp"
 
-using namespace std;
-
-
-
 string svg_header(int width,int height);
 
 string svg_footer();

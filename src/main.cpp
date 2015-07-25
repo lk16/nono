@@ -10,7 +10,7 @@ int main(){
   srand(time(NULL));
 
   nonogram nono(20,20);
-  nono.randomise();
+  nono.init_clustered();
   nono.make_solvable();
   //nono.print();
   nono.save_as_svg("puzzle.svg",false);

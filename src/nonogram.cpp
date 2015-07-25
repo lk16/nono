@@ -7,7 +7,7 @@ nonogram::nonogram(int h,int w){
 }
 
 
-void nonogram::randomise(){
+void nonogram::init_randomised(){
   for(int i=0;i<width*height;++i){
     fields[i] = (rand() % 5 >= 2) ? 1 : 0;
   }
@@ -262,6 +262,59 @@ void nonogram::make_solvable()
       }
       fields = solution;
     }
-    randomise();
+    init_randomised();
+  }
+}
+
+void nonogram::init_clustered()
+{
+  init_randomised();
+  
+  const int cluster_steps = 10;
+  const int k = 100;
+  
+  int non_white = 0;
+  int neighbours = 0;
+  double chance;
+  for(int c=0;c<cluster_steps;c++){
+    for(int i=0;i<width*height;++i){
+      int x = i%width;
+      int y = i/width;
+      non_white = neighbours = 0;
+      if(y>0){
+        neighbours++;
+        if(fields[i-width] != WHITE){
+          non_white++; 
+        }
+      }
+      if(y<height){
+        neighbours++;
+        if(fields[i+width] != WHITE){
+          non_white++; 
+        }
+      }
+      if(x>0){
+        neighbours++;
+        if(fields[i-1] != WHITE){
+          non_white++; 
+        }
+      }
+      if(x<width){
+        neighbours++;
+        if(fields[i+1] != WHITE){
+          non_white++;
+        }
+      }
+      if(fields[i] != WHITE){
+        non_white += k;
+      }
+      chance = (double)non_white / (k+neighbours);
+      if(chance >= 1.0){
+        fields[i] = BLACK;
+      }
+      else if(rand() < RAND_MAX*chance){
+        fields[i] = BLACK;
+      }
+    }
   }
 }
