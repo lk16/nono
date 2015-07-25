@@ -9,7 +9,7 @@ int main(){
   
   srand(time(NULL));
 
-  nonogram nono(25,25);
+  nonogram nono(8,4);
   nono.randomise();
   nono.make_solvable();
   nono.print();

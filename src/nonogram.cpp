@@ -18,7 +18,7 @@ vector<int> nonogram::get_col_seq(int x) const
   vector<int> res;
   int seq = 0;
   for(int y=0;y<height;++y){
-    int cur = y*height+x;
+    int cur = y*width+x;
     if(fields[cur]!=WHITE){
       ++seq;
     }
@@ -38,7 +38,7 @@ vector<int> nonogram::get_row_seq(int y) const
   vector<int> res;
   int seq = 0;
   for(int x=0;x<width;++x){
-    int cur = y*height+x;
+    int cur = y*width+x;
     if(fields[cur]!=WHITE){
       ++seq;
     }
@@ -124,7 +124,7 @@ void nonogram::save_as_svg(const string& filename,bool solved) const
     }
   }
   
-  for(int c=0;c<height;++c){
+  for(int c=0;c<width;++c){
     vector<int> seq = get_col_seq(c);
     for(unsigned i=0;i<seq.size();++i){
       int x = SEQ_WIDTH + (SQUARE_SIZE/2) + (SQUARE_SIZE*c);
@@ -241,7 +241,6 @@ void nonogram::make_solvable()
   const int max_tries = 30;
   
   while(true){
-    randomise();
     int tries_left = max_tries;
     while(tries_left>0){
       --tries_left;
@@ -263,5 +262,6 @@ void nonogram::make_solvable()
       }
       fields = solution;
     }
+    randomise();
   }
 }
