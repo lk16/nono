@@ -8,12 +8,12 @@
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <set>
 #include <sys/time.h>
 #include <vector>
 #include <map>
 
+#include "colour.hpp"
+
 using namespace std;
 
-const int UNKNOWN = -1;
-const int WHITE = 0;
-const int BLACK = 1;
