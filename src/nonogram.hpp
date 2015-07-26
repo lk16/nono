@@ -3,10 +3,30 @@
 
 #include "includes.hpp"
 #include "svg.hpp"
-#include "combinations.hpp"
 
 class nonogram{
   
+  
+  class combi_t{
+
+    vector<int> seq,offset;
+    int max_id;
+    bool first_result;
+
+    bool next(vector<int>* out);
+
+    static bool combi_match(const vector<int>& lhs,const vector<int>& rhs);
+
+    static void assign_intersection_lhs(vector<int>& lhs,const vector<int>& rhs);
+
+
+  public:
+    combi_t(const vector<int>& sequence,int _max_id);
+
+    vector<int> try_solving(const vector<int>& given,unsigned max_tries);
+    
+  };
+
   int width,height;
   vector<int> fields;
   // indexes:
@@ -15,6 +35,7 @@ class nonogram{
   // 6 7 8 ..
   
   void try_solving(vector<int>& sol) const;
+
   
   
 public:

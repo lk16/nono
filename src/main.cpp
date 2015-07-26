@@ -1,6 +1,5 @@
 #include "includes.hpp"
 #include "nonogram.hpp"
-#include "combinations.hpp"
 
 using namespace std;
 

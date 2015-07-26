@@ -208,7 +208,7 @@ void nonogram::try_solving(vector<int>& sol) const
   do{
     change = false;
     for(const auto& l: lines){
-      combinations c(l.seq,l.indexes.size());
+      combi_t c(l.seq,l.indexes.size());
       vector<int> given;
       for(const auto& i: l.indexes){
         given.push_back(sol[i]);
@@ -326,3 +326,144 @@ void nonogram::init_clustered()
     }
   }
 }
+
+
+nonogram::combi_t::combi_t(const vector<int>& sequence, int _max_id)
+{
+  max_id = _max_id;
+  seq = sequence;
+  offset.assign(seq.size(),0);
+  for(unsigned i=1;i<offset.size();++i){
+    offset[i] = offset[i-1] + seq[i-1] + 1;
+  }
+  first_result = true;
+}
+
+bool nonogram::combi_t::next(vector<int>* out)
+{
+  if(offset.empty()){
+    return false;
+  }
+  if(!first_result){
+    // move will be index of the lowest offset that we move
+    int move = offset.size()-1;
+    int sum = 0;
+    while(true){
+      sum += seq[move] + 1;
+      if(offset[move] + sum - 1 < max_id){
+        break;
+      }
+      --move; 
+      if(move<0){
+        return false;
+      }
+    };
+    
+    ++offset[move];
+    for(unsigned i=move+1;i<offset.size();++i){
+      offset[i] = offset[i-1] + seq[i-1] + 1;
+    }
+  }
+  else{
+    first_result = false;
+  }
+  
+  out->assign(max_id,WHITE);
+  for(unsigned i=0;i<offset.size();++i){
+    for(int j=0;j<seq[i];++j){
+      (*out)[offset[i]+j] = BLACK;
+    }
+  }
+  
+  return true;
+}
+
+vector<int> nonogram::combi_t::try_solving(const vector<int>& given,unsigned max_tries)
+{
+  {
+    bool found_all = true;
+    for(const auto& x:given){
+      if(x==UNKNOWN){
+        found_all = false;
+        break;
+      }
+    }
+    if(found_all){
+      return given;
+    }
+  }
+  
+  
+  unsigned tries = 0;
+  
+  assert(given.size() == (unsigned)max_id);
+  
+  vector<int> combi;
+  
+  vector<int> intersection(given); 
+  bool first = true;
+  
+  
+  while(next(&combi)){
+    assert(combi.size());
+    if(combi_match(combi,given)){
+      if(first){
+        intersection = combi;
+        first = false;
+      }
+      else{
+        assert(intersection.size() == (unsigned)max_id);
+        assign_intersection_lhs(intersection,combi);
+        assert(intersection.size() == (unsigned)max_id);
+      }
+    }
+    ++tries;
+    if(tries >= max_tries){
+      return given;
+    }
+  }
+  assert(intersection.size() == (unsigned)max_id);
+  
+  for(unsigned i=0;i<intersection.size();++i){
+    assert(given[i]==UNKNOWN || given[i]==intersection[i]);
+  }
+  
+  
+  
+  return intersection;
+}
+
+bool nonogram::combi_t::combi_match(const vector<int>& lhs, const vector<int>& rhs)
+{
+  assert(lhs.size()==rhs.size());
+  vector<int>::const_iterator lit,rit;
+  lit = lhs.begin();
+  rit = rhs.begin();
+  while(lit != lhs.end()){
+    if(*lit != *rit && *lit!=UNKNOWN && *rit!=UNKNOWN){
+      return false;
+    }
+    ++lit;
+    ++rit;
+  }
+  return true;
+}
+
+void nonogram::combi_t::assign_intersection_lhs(vector<int>& lhs, const vector<int>& rhs)
+{
+  assert(lhs.size()==rhs.size());
+  vector<int>::const_iterator rit;
+  vector<int>::iterator lit;
+  lit = lhs.begin();
+  rit = rhs.begin();
+  while(lit != lhs.end()){
+    if(*lit != *rit){
+      *lit = UNKNOWN;
+    }
+    ++lit;
+    ++rit;
+  }
+}
+
+
+
