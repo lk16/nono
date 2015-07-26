@@ -105,7 +105,7 @@ vector<int> combinations::try_solving(const vector<int>& given,unsigned max_trie
   return intersection;
 }
 
-bool combi_match(const vector<int>& lhs, const vector<int>& rhs)
+bool combinations::combi_match(const vector<int>& lhs, const vector<int>& rhs)
 {
   assert(lhs.size()==rhs.size());
   vector<int>::const_iterator lit,rit;
@@ -121,7 +121,7 @@ bool combi_match(const vector<int>& lhs, const vector<int>& rhs)
   return true;
 }
 
-void assign_intersection_lhs(vector<int>& lhs, const vector<int>& rhs)
+void combinations::assign_intersection_lhs(vector<int>& lhs, const vector<int>& rhs)
 {
   assert(lhs.size()==rhs.size());
   vector<int>::const_iterator rit;

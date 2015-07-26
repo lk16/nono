@@ -7,7 +7,9 @@ using namespace std;
 
 int main(){
   
-  srand(time(NULL));
+  timeval t;
+  gettimeofday(&t,NULL);
+  srand(t.tv_sec ^ t.tv_usec);
 
   nonogram nono(20,20);
   nono.init_randomised(0.3);
