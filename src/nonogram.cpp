@@ -7,9 +7,9 @@ nonogram::nonogram(int h,int w){
 }
 
 
-void nonogram::init_randomised(){
+void nonogram::init_randomised(double chance){
   for(int i=0;i<width*height;++i){
-    fields[i] = (rand() % 5 >= 2) ? 1 : 0;
+    fields[i] = (rand() < chance*RAND_MAX) ? BLACK : WHITE;
   }
 }
   
@@ -262,16 +262,21 @@ void nonogram::make_solvable()
       }
       fields = solution;
     }
-    init_randomised();
+    for(int i=0;i<10;++i){
+      fields[rand() % width*height] = rand() % 2;
+    }
   }
 }
 
 void nonogram::init_clustered()
 {
-  init_randomised();
+  // this code was copied from my own fire spreading simulation project
+  // http://github.com/lk16/fire
   
-  const int cluster_steps = 10;
-  const int k = 100;
+  init_randomised(0.1);
+  
+  const int cluster_steps = 0;
+  const int k = 4;
   
   int non_white = 0;
   int neighbours = 0;
@@ -314,6 +319,9 @@ void nonogram::init_clustered()
       }
       else if(rand() < RAND_MAX*chance){
         fields[i] = BLACK;
+      }
+      else{
+        fields[i] = WHITE;
       }
     }
   }

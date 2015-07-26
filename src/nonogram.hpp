@@ -16,12 +16,13 @@ class nonogram{
   
   void try_solving(vector<int>& sol) const;
   
+  
 public:
   
   nonogram(int h,int w);
   ~nonogram() = default;
   
-  void init_randomised();
+  void init_randomised(double chance);
   void init_clustered();
   
   

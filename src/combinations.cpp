@@ -13,6 +13,9 @@ combinations::combinations(const vector<int>& sequence, int _max_id)
 
 bool combinations::next(vector<int>* out)
 {
+  if(offset.empty()){
+    return false;
+  }
   if(!first_result){
     // move will be index of the lowest offset that we move
     int move = offset.size()-1;
