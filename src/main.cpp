@@ -17,13 +17,13 @@ int main(){
   set<colour> colours;
   colours.insert(BLACK);
   colours.insert(WHITE);
-  //colours.insert(RED);
+  colours.insert(RED);
   //colours.insert(BLUE);
   
   
   
   
-  nonogram nono(25,25,colours);
+  nonogram nono(15,15,colours);
   nono.init_randomised(0.5);
   nono.make_solvable();
   nono.save_as_svg("puzzle.svg",false);

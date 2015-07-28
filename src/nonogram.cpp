@@ -227,7 +227,12 @@ void nonogram::make_solvable()
     
     unsigned before = given_fields.size();
     while(given_fields.size() < before + 5){
-      given_fields.insert(unsolved_fields[rand() % unsolved_fields.size()]);
+      int j = rand() % unsolved_fields.size();
+      given_fields.insert(unsolved_fields[j]);
+      unsolved_fields.erase(unsolved_fields.begin() + j);
+      if(unsolved_fields.empty()){
+        break;
+      }
     }
   }
 }
