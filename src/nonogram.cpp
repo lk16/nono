@@ -216,21 +216,17 @@ void nonogram::make_solvable()
   
   while(true){
     try_solving(solution);
-    int count = 0;
+    vector<int> unsolved_fields;
     for(int i=0;i<width*height;++i){
-      if(solution[i]!=UNKNOWN){
-        ++count;
+      if(solution[i]==UNKNOWN){
+        unsolved_fields.push_back(i);
       }
     }
-    cout << "With " << given_fields.size() << " given fields: " << count << " solved fields\n";
-    if(count == width*height){
+    cout << "With " << given_fields.size() << " given fields: " << (width*height)-unsolved_fields.size() << " solved fields\n";
+    if(unsolved_fields.empty()){
       return;
     }
-    int r;
-    do{
-      r = rand() % (width*height);
-    }while(given_fields.count(r) == 1);
-    given_fields.insert(r);
+    given_fields.insert(unsolved_fields[rand() % unsolved_fields.size()]);
   }
 }
 
