@@ -151,30 +151,23 @@ void nonogram::try_solving(vector<colour>& sol) const
 {
   sol.assign(width*height,UNKNOWN);
   
-  struct line_t{
-    vector<int> indexes;
-    vector<pair<colour,int>> seq;
-  };
+ 
   
+  vector<vector<int>> indexes(width+height);
+  vector<sequence_t> sequences;
   
-  
-  vector<line_t> lines;
   
   for(int y=0;y<height;++y){
-    line_t line;
     for(int x=0;x<width;++x){
-      line.indexes.push_back(y*width+x);
+      indexes[y].push_back(y*width+x);
     }
-    line.seq = get_row_seq(y);
-    lines.push_back(line);
+    sequences.push_back(sequence_t(get_row_seq(y),width));
   }
   for(int x=0;x<width;++x){
-    line_t line;
     for(int y=0;y<height;++y){
-      line.indexes.push_back(y*width+x);
+      indexes[height+x].push_back(y*width+x);
     }
-    line.seq = get_col_seq(x);
-   lines.push_back(line);
+    sequences.push_back(sequence_t(get_col_seq(x),height));
   }
   
   
@@ -184,17 +177,16 @@ void nonogram::try_solving(vector<colour>& sol) const
   bool change;
   do{
     change = false;
-    for(const auto& l: lines){
-      sequence_t c(l.seq,l.indexes.size());
+    for(unsigned i=0;i<sequences.size();++i){
       vector<colour> given;
-      for(const auto& i: l.indexes){
-        given.push_back(sol[i]);
+      for(const auto& j: indexes[i]){
+        given.push_back(sol[j]);
       }
-      vector<colour> solved_seq = c.solve(given);
+      vector<colour> solved_seq = sequences[i].solve(given);
       for(unsigned s=0; s<solved_seq.size();++s){
-        if(sol[l.indexes[s]] != solved_seq[s]){
-          assert(sol[l.indexes[s]] == UNKNOWN);
-          sol[l.indexes[s]] = solved_seq[s];
+        if(sol[indexes[i][s]] != solved_seq[s]){
+          assert(sol[indexes[i][s]] == UNKNOWN);
+          sol[indexes[i][s]] = solved_seq[s];
           change = true;
         }
       }
