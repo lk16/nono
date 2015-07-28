@@ -10,7 +10,7 @@ nonogram::nonogram(int h,int w,const set<colour>& _colours){
 
 void nonogram::init_randomised(double chance){
   for(int i=0;i<width*height;++i){
-    fields[i] = (rand() < chance*RAND_MAX) ? BLACK : WHITE;
+    fields[i] = (rand() < chance*RAND_MAX) ? random_colour() : WHITE;
   }
 }
   
@@ -98,7 +98,7 @@ void nonogram::save_as_svg(const string& filename,bool solved) const
 
   if(solved){
     for(int i=0;i<width*height;++i){
-      if(fields[i] == BLACK){
+      if(fields[i] != WHITE){
         int x = FIELD_X_START + SQUARE_SIZE*(i%width);
         int y = FIELD_Y_START + SQUARE_SIZE*(i/width);
         string style = "style=\"fill:" + fields[i].str() + "\"";
@@ -130,7 +130,10 @@ void nonogram::save_as_svg(const string& filename,bool solved) const
     for(unsigned i=0;i<seq.size();++i){
       int x = SEQ_WIDTH - (SQUARE_SIZE/2) - (SQUARE_SIZE*i);
       int y = SEQ_HEIGHT  + (SQUARE_SIZE*r) + (SQUARE_SIZE*3/4);
-      file << svg_text_centered(x,y,to_str<int>(seq[seq.size()-i-1].second));
+      string style = "style=\"text-anchor:middle;alignment-baseline=central\" fill=\"" + seq[seq.size()-i-1].first.str() + "\"";
+      string text = to_str<int>(seq[seq.size()-i-1].second);
+      
+      file << svg_text(x,y,text,style);
     }
   }
   
@@ -139,7 +142,9 @@ void nonogram::save_as_svg(const string& filename,bool solved) const
     for(unsigned i=0;i<seq.size();++i){
       int x = SEQ_WIDTH + (SQUARE_SIZE/2) + (SQUARE_SIZE*c);
       int y = SEQ_HEIGHT - (SQUARE_SIZE/4) - (SQUARE_SIZE*i);
-      file << svg_text_centered(x,y,to_str<int>(seq[seq.size()-i-1].second));
+      string style = "style=\"text-anchor:middle;alignment-baseline=central\" fill=\"" + seq[seq.size()-i-1].first.str() + "\"";
+      string text = to_str<int>(seq[seq.size()-i-1].second);
+      file << svg_text(x,y,text,style);
     }
   }
     
@@ -209,8 +214,6 @@ void nonogram::make_solvable()
   const int max_tries = 30;
   
   while(true){
-    cout << '\n';
-    print();
     int tries_left = max_tries;
     while(tries_left>0){
       --tries_left;
@@ -329,16 +332,7 @@ vector<colour> nonogram::sequence_t::solve(const vector<colour>& given)
   }
   
   assert(given.size() == (unsigned)max_id);
-  
-  map<colour,string> print_val;
-  print_val[RED] = "2";
-  print_val[BLACK] = "1";
-  print_val[WHITE] = "-";
-  print_val[UNKNOWN] = " ";
-  print_val[GREEN] = "3";
-  print_val[BLUE] = "4";
-  
-  
+ 
   vector<vector<colour>> possibilities;
   vector<int> offset;
   generate_possibilities(&offset,0,&possibilities);
@@ -447,8 +441,11 @@ void nonogram::sequence_t::assign_intersection_lhs(vector<colour>& lhs, const ve
 
 colour nonogram::random_colour() const
 {
-  auto it = colours.begin();
-  advance(it,rand() % colours.size());
+  set<colour>::const_iterator it;
+  do{
+    it = colours.begin();
+    advance(it,rand() % colours.size());
+  }while(*it == WHITE);
   return *it;
 }
 

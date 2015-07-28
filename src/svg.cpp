@@ -27,9 +27,9 @@ string svg_footer()
   return "</svg>\n";
 }
 
-string svg_text_centered(int x,int y,const string& text){
+string svg_text(int x,int y,const string& text,const string& tags){
   string res = "<text x=\"" + to_str<int>(x) + "\" y=\"";
-  res += to_str<int>(y) + "\" style=\"text-anchor:middle;alignment-baseline=central\">";
+  res += to_str<int>(y) + "\" " + tags + ">";
   res += text + "</text>\n";
   return res;
 }

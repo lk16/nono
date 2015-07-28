@@ -14,17 +14,16 @@ int main(){
   seed_well();
   
   
-  assert(UNKNOWN == UNKNOWN);
-  assert(!(UNKNOWN != UNKNOWN));
-  
-  
   set<colour> colours;
   colours.insert(BLACK);
   colours.insert(WHITE);
+  colours.insert(RED);
+  colours.insert(BLUE);
   
   
   
-  nonogram nono(10,10,colours);
+  
+  nonogram nono(20,20,colours);
   nono.init_randomised(0.5);
   nono.make_solvable();
   nono.save_as_svg("puzzle.svg",false);
