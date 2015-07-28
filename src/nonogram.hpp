@@ -5,26 +5,27 @@
 #include "svg.hpp"
 #include "colour.hpp"
 
-class nonogram{
+struct nonogram{
   
-  class combi_t{
+  struct sequence_t{
 
     vector<pair<colour,int>> seq;
-    vector<int> offset;
     int max_id;
-    bool first_result;
-
-    bool next(vector<colour>* out);
+    
 
     static bool combi_match(const vector<colour>& lhs,const vector<colour>& rhs);
 
     static void assign_intersection_lhs(vector<colour>& lhs,const vector<colour>& rhs);
-
+    
+    // idea: put down sequence item `move' for all its possibilities
+    // and call recursively with move+1
+    // restore state 
+    void generate_possibilities(vector<int>* offset,int move,vector<vector<colour>>* out);
 
   public:
-    combi_t(const vector<pair<colour,int>>& sequence,int _max_id);
+    sequence_t(const vector<pair<colour,int>>& sequence,int _max_id);
 
-    vector<colour> try_solving(const vector<colour>& given,unsigned max_tries);
+    vector<colour> solve(const vector<colour>& given);
     
   };
   
@@ -61,7 +62,6 @@ public:
   void make_solvable();
   
   void print() const;
-  
   
 };
 

@@ -20,15 +20,15 @@ vector<pair<colour,int>> nonogram::get_col_seq(int x) const
   pair<colour,int> p(WHITE,0);
   for(int y=0;y<height;++y){
     colour cur = fields[y*width+x];
-    if(cur != p.first){
+    if(cur == p.first){
+      ++p.second;
+    } 
+    else{
       if(p.first != WHITE){
         res.push_back(p);
       }
       p.first = cur;
       p.second = 1;
-    }
-    else{
-      ++p.second;
     }
   }
   if(p.first != WHITE){
@@ -174,26 +174,29 @@ void nonogram::try_solving(vector<colour>& sol) const
       line.indexes.push_back(y*width+x);
     }
     line.seq = get_col_seq(x);
-    lines.push_back(line);
+   lines.push_back(line);
   }
+  
+  
+  
+  
   
   bool change;
   do{
     change = false;
     for(const auto& l: lines){
-      combi_t c(l.seq,l.indexes.size());
+      sequence_t c(l.seq,l.indexes.size());
       vector<colour> given;
       for(const auto& i: l.indexes){
         given.push_back(sol[i]);
       }
-      vector<colour> solved_line = c.try_solving(given,1000);
-      int s = 0;
-      for(const auto& i: l.indexes){
-        if(sol[i] != solved_line[s]){
-           sol[i] = solved_line[s];
+      vector<colour> solved_seq = c.solve(given);
+      for(unsigned s=0; s<solved_seq.size();++s){
+        if(sol[l.indexes[s]] != solved_seq[s]){
+          assert(sol[l.indexes[s]] == UNKNOWN);
+          sol[l.indexes[s]] = solved_seq[s];
           change = true;
         }
-        ++s;
       }
     }
   }while(change);
@@ -214,6 +217,8 @@ void nonogram::make_solvable()
   const int max_tries = 30;
   
   while(true){
+    cout << '\n';
+    print();
     int tries_left = max_tries;
     while(tries_left>0){
       --tries_left;
@@ -228,11 +233,14 @@ void nonogram::make_solvable()
       if(solved){
         return;
       }
+      int count = 0;
       for(int i=0;i<width*height;++i){
         if(solution[i]==UNKNOWN){
+          ++count;
           solution[i] = random_colour();
         }
       }
+      cout << count << " unsolved fields\n";
       fields = solution;
     }
     for(int i=0;i<10;++i){
@@ -301,57 +309,15 @@ void nonogram::init_clustered()
 }
 
 
-nonogram::combi_t::combi_t(const vector<pair<colour,int>>& sequence, int _max_id)
+nonogram::sequence_t::sequence_t(const vector<pair<colour,int>>& sequence, int _max_id)
 {
   max_id = _max_id;
   seq = sequence;
-  offset.assign(seq.size(),0);
-  for(unsigned i=1;i<offset.size();++i){
-    offset[i] = offset[i-1] + seq[i-1].second + (seq[i].first == seq[i-1].first ? 1 : 0);
-  }
-  first_result = true;
 }
 
-bool nonogram::combi_t::next(vector<colour>* out)
-{
-  if(offset.empty()){
-    return false;
-  }
-  if(!first_result){
-    // move will be index of the lowest offset that we move
-    int move = offset.size()-1;
-    int sum = 0;
-    while(true){
-      sum += seq[move].second + 1;
-      if(offset[move] + sum - 1 < max_id){
-        break;
-      }
-      --move; 
-      if(move<0){
-        return false;
-      }
-    };
-    
-    ++offset[move];
-    for(unsigned i=move+1;i<offset.size();++i){
-      offset[i] = offset[i-1] + seq[i-1].second + (seq[i].first == seq[i-1].first ? 1 : 0);
-    }
-  }
-  else{
-    first_result = false;
-  }
-  
-  out->assign(max_id,WHITE);
-  for(unsigned i=0;i<offset.size();++i){
-    for(int j=0;j<seq[i].second;++j){
-      (*out)[offset[i]+j] = seq[i].first;
-    }
-  }
-  
-  return true;
-}
 
-vector<colour> nonogram::combi_t::try_solving(const vector<colour>& given,unsigned max_tries)
+
+vector<colour> nonogram::sequence_t::solve(const vector<colour>& given)
 {
   {
     bool found_all = true;
@@ -365,48 +331,103 @@ vector<colour> nonogram::combi_t::try_solving(const vector<colour>& given,unsign
       return given;
     }
   }
-  
-  
-  unsigned tries = 0;
+  if(seq.empty()){
+    return vector<colour>(max_id,WHITE);
+  }
   
   assert(given.size() == (unsigned)max_id);
   
-  vector<colour> combi;
+  map<colour,string> print_val;
+  print_val[RED] = "2";
+  print_val[BLACK] = "1";
+  print_val[WHITE] = "-";
+  print_val[UNKNOWN] = " ";
+  print_val[GREEN] = "3";
+  print_val[BLUE] = "4";
   
-  vector<colour> intersection(given); 
-  bool first = true;
   
+  vector<vector<colour>> possibilities;
+  vector<int> offset;
+  generate_possibilities(&offset,0,&possibilities);
   
-  while(next(&combi)){
-    assert(combi.size());
-    if(combi_match(combi,given)){
-      if(first){
-        intersection = combi;
-        first = false;
-      }
-      else{
-        assert(intersection.size() == (unsigned)max_id);
-        assign_intersection_lhs(intersection,combi);
-        assert(intersection.size() == (unsigned)max_id);
-      }
+  /*
+  if(possibilities.empty()){
+    cout << "impossible to solve sequence:\nseq: ";
+    for(auto s:seq){
+      cout << s.second << " ";
     }
-    ++tries;
-    if(tries >= max_tries){
-      return given;
+    cout << "\ngiven:";
+    for(auto g:given){
+      cout << print_val[g] << " "; 
     }
+    cout << "\n";
   }
-  assert(intersection.size() == (unsigned)max_id);
+  */
   
-  for(unsigned i=0;i<intersection.size();++i){
-    assert(given[i]==UNKNOWN || given[i]==intersection[i]);
+  vector<colour> intersection(possibilities.front()); 
+  
+
+
+  
+  //cout << "========================================================\n";
+  for(auto& p: possibilities){
+    /*for(auto x: p){
+      cout << print_val[x] << " ";
+    }
+    cout << "\n";*/
+    assign_intersection_lhs(intersection,p);
   }
-  
-  
+  //cout << "\n";
+  /*cout << "intersection: ";
+  for(auto x: intersection){
+    cout << print_val[x] << " ";
+  }
+  cout << "\n";*/
   
   return intersection;
 }
 
-bool nonogram::combi_t::combi_match(const vector<colour>& lhs, const vector<colour>& rhs)
+void nonogram::sequence_t::generate_possibilities(vector<int>* offset, int move, vector<vector<colour>>* out)
+{
+  if((unsigned)move==seq.size()){
+    if(offset->back() + seq.back().second <= max_id){
+      vector<colour> res(max_id,WHITE);
+      for(unsigned i=0;i<offset->size();++i){
+        for(int j=0;j<seq[i].second;++j){
+          res[(*offset)[i]+j] = seq[i].first;
+        }
+      }
+      out->push_back(res);
+    }
+    return;
+  }
+  
+  int start;
+  if(move==0){
+    start = 0;
+  }
+  else{
+    assert(!offset->empty());
+    start = offset->back() + seq[move-1].second + (seq[move-1].first==seq[move].first ? 1 : 0);
+  }
+  int end = max_id + 1;
+  for(unsigned i=move;i<seq.size();++i){
+    end -= seq[i].second;
+  }
+  
+  for(int i=start;i<end;++i){
+    offset->push_back(i);
+    generate_possibilities(offset,move+1,out);
+    offset->pop_back();
+  }
+
+  
+}
+
+
+
+
+bool nonogram::sequence_t::combi_match(const vector<colour>& lhs, const vector<colour>& rhs)
 {
   assert(lhs.size()==rhs.size());
   vector<colour>::const_iterator lit,rit;
@@ -422,7 +443,7 @@ bool nonogram::combi_t::combi_match(const vector<colour>& lhs, const vector<colo
   return true;
 }
 
-void nonogram::combi_t::assign_intersection_lhs(vector<colour>& lhs, const vector<colour>& rhs)
+void nonogram::sequence_t::assign_intersection_lhs(vector<colour>& lhs, const vector<colour>& rhs)
 {
   assert(lhs.size()==rhs.size());
   vector<colour>::const_iterator rit;
@@ -443,4 +464,19 @@ colour nonogram::random_colour() const
   auto it = colours.begin();
   advance(it,rand() % colours.size());
   return *it;
+}
+
+void nonogram::print() const
+{
+  map<colour,string> print_map;
+  print_map[WHITE] = "-";
+  print_map[BLACK] = "@";
+  print_map[UNKNOWN] = "?";
+  
+  for(int y=0;y<height;++y){
+    for(int x=0;x<width;++x){
+      cout << print_map[fields[y*width+x]] << " ";
+    }
+    cout << "\n";
+  }
 }
