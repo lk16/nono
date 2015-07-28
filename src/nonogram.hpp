@@ -5,9 +5,9 @@
 #include "svg.hpp"
 #include "colour.hpp"
 
-struct nonogram{
+class nonogram{
   
-  struct sequence_t{
+  class sequence_t{
 
     vector<pair<colour,int>> seq;
     int max_id;
@@ -20,12 +20,12 @@ struct nonogram{
     // idea: put down sequence item `move' for all its possibilities
     // and call recursively with move+1
     // restore state 
-    void generate_possibilities(vector<int>* offset,int move,vector<vector<colour>>* out);
+    void generate_possibilities(vector<int>* offset,int move,vector<vector<colour>>* out) const;
 
   public:
     sequence_t(const vector<pair<colour,int>>& sequence,int _max_id);
 
-    vector<colour> solve(const vector<colour>& given);
+    vector<colour> solve(const vector<colour>& given) const;
     
   };
   
@@ -33,7 +33,6 @@ struct nonogram{
   int width,height;
   vector<colour> fields;
   set<int> given_fields;
-  set<colour> colours;
   // indexes:
   // 0 1 2
   // 3 4 5
@@ -44,6 +43,8 @@ struct nonogram{
   colour random_colour() const;
   
 public:
+   
+  set<colour> colours;
   
   nonogram(int h,int w,const set<colour>& _colours);
   ~nonogram() = default;

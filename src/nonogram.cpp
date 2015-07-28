@@ -226,13 +226,10 @@ void nonogram::make_solvable()
     }
     
     unsigned before = given_fields.size();
-    while(given_fields.size() < before + 5){
+    while(given_fields.size() < before + 5 && !unsolved_fields.empty()){
       int j = rand() % unsolved_fields.size();
       given_fields.insert(unsolved_fields[j]);
       unsolved_fields.erase(unsolved_fields.begin() + j);
-      if(unsolved_fields.empty()){
-        break;
-      }
     }
   }
 }
@@ -305,7 +302,7 @@ nonogram::sequence_t::sequence_t(const vector<pair<colour,int>>& sequence, int _
 
 
 
-vector<colour> nonogram::sequence_t::solve(const vector<colour>& given)
+vector<colour> nonogram::sequence_t::solve(const vector<colour>& given) const
 {
   {
     bool found_all = true;
@@ -359,7 +356,7 @@ vector<colour> nonogram::sequence_t::solve(const vector<colour>& given)
   return intersection;
 }
 
-void nonogram::sequence_t::generate_possibilities(vector<int>* offset, int move, vector<vector<colour>>* out)
+void nonogram::sequence_t::generate_possibilities(vector<int>* offset, int move, vector<vector<colour>>* out) const
 {
   if((unsigned)move==seq.size()){
     if(offset->back() + seq.back().second <= max_id){
