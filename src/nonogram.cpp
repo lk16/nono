@@ -223,6 +223,7 @@ void nonogram::make_solvable()
         }
       }
       if(solved){
+        cout << "Solved!\n";
         return;
       }
       int count = 0;
@@ -232,7 +233,7 @@ void nonogram::make_solvable()
           solution[i] = random_colour();
         }
       }
-      cout << count << " unsolved fields\n";
+      cout << "Found " << count << " unsolved fields\n";
       fields = solution;
     }
     for(int i=0;i<10;++i){
@@ -342,40 +343,33 @@ vector<colour> nonogram::sequence_t::solve(const vector<colour>& given)
   vector<int> offset;
   generate_possibilities(&offset,0,&possibilities);
   
-  /*
   if(possibilities.empty()){
-    cout << "impossible to solve sequence:\nseq: ";
-    for(auto s:seq){
-      cout << s.second << " ";
-    }
-    cout << "\ngiven:";
-    for(auto g:given){
-      cout << print_val[g] << " "; 
-    }
-    cout << "\n";
+    return given;
   }
-  */
   
-  vector<colour> intersection(possibilities.front()); 
+  vector<colour> intersection; 
   
+  bool first = true;
 
-
   
-  //cout << "========================================================\n";
   for(auto& p: possibilities){
-    /*for(auto x: p){
-      cout << print_val[x] << " ";
+
+    if(combi_match(p,given)){
+      if(first){
+        intersection = p;
+        first = false;
+      }
+      else{ 
+        assign_intersection_lhs(intersection,p);
+      }
     }
-    cout << "\n";*/
-    assign_intersection_lhs(intersection,p);
   }
-  //cout << "\n";
-  /*cout << "intersection: ";
-  for(auto x: intersection){
-    cout << print_val[x] << " ";
-  }
-  cout << "\n";*/
+
+  assert(!first);
   
+  for(unsigned i=0;i<intersection.size();++i){
+    assert(given[i]==intersection[i] || given[i]==UNKNOWN);
+  }
   return intersection;
 }
 
@@ -460,6 +454,11 @@ colour nonogram::random_colour() const
 
 void nonogram::print() const
 {
+  print_table(fields,height,width);
+}
+
+void print_table(const vector<colour>& tab, int height, int width)
+{
   map<colour,string> print_map;
   print_map[WHITE] = "-";
   print_map[BLACK] = "@";
@@ -467,7 +466,7 @@ void nonogram::print() const
   
   for(int y=0;y<height;++y){
     for(int x=0;x<width;++x){
-      cout << print_map[fields[y*width+x]] << " ";
+      cout << print_map[tab[y*width+x]] << " ";
     }
     cout << "\n";
   }

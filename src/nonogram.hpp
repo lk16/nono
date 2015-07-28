@@ -66,4 +66,4 @@ public:
 };
 
 
-void print_table(const vector<int>& tab,int height,int width);
+void print_table(const vector<colour>& tab,int height,int width);
