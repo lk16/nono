@@ -96,22 +96,23 @@ void nonogram::save_as_svg(const string& filename,bool solved) const
   ofstream file(filename);
   file << svg_header(TOTAL_WIDTH,TOTAL_HEIGHT);
 
-  if(solved){
-    for(int i=0;i<width*height;++i){
+  if(!solved){
+    file << svg_rectangle(SEQ_WIDTH,SEQ_HEIGHT,FIELD_WIDTH,FIELD_HEIGHT,"style=\"fill:rgb(200,200,200)\"");
+  }
+  
+  
+  for(int i=0;i<width*height;++i){
+    if(solved || given_fields.count(i)==1){
       if(fields[i] != WHITE){
         int x = FIELD_X_START + SQUARE_SIZE*(i%width);
         int y = FIELD_Y_START + SQUARE_SIZE*(i/width);
         string style = "style=\"fill:" + fields[i].str() + "\"";
-        
-        
         file << svg_rectangle(x,y,SQUARE_SIZE,SQUARE_SIZE,style);
       }
     }
   }
-  else{
-    file << svg_rectangle(SEQ_WIDTH,SEQ_HEIGHT,FIELD_WIDTH,FIELD_HEIGHT,"style=\"fill:rgb(200,200,200)\"");
-  }
   
+ 
     
   for(int i=0;i<=width;++i){
     int x = FIELD_X_START + SQUARE_SIZE*i;
@@ -155,7 +156,9 @@ void nonogram::save_as_svg(const string& filename,bool solved) const
 void nonogram::try_solving(vector<colour>& sol) const
 {
   sol.assign(width*height,UNKNOWN);
-  
+  for(auto x: given_fields){
+    sol[x] = fields[x];
+  }
  
   
   vector<vector<int>> indexes(width+height);
@@ -210,38 +213,24 @@ void nonogram::try_solving(vector<colour>& sol) const
 void nonogram::make_solvable()
 {
   vector<colour> solution;
-  bool solved;
-  const int max_tries = 30;
   
   while(true){
-    int tries_left = max_tries;
-    while(tries_left>0){
-      --tries_left;
-      solved = true;
-      try_solving(solution);
-      for(int i=0;i<width*height;++i){
-        if(solution[i]==UNKNOWN){
-          solved = false;
-          break;
-        }
+    try_solving(solution);
+    int count = 0;
+    for(int i=0;i<width*height;++i){
+      if(solution[i]!=UNKNOWN){
+        ++count;
       }
-      if(solved){
-        cout << "Solved!\n";
-        return;
-      }
-      int count = 0;
-      for(int i=0;i<width*height;++i){
-        if(solution[i]==UNKNOWN){
-          ++count;
-          solution[i] = random_colour();
-        }
-      }
-      cout << "Found " << count << " unsolved fields\n";
-      fields = solution;
     }
-    for(int i=0;i<10;++i){
-      fields[rand() % width*height] = random_colour();
+    cout << "With " << given_fields.size() << " given fields: " << count << " solved fields\n";
+    if(count == width*height){
+      return;
     }
+    int r;
+    do{
+      r = rand() % (width*height);
+    }while(given_fields.count(r) == 1);
+    given_fields.insert(r);
   }
 }
 

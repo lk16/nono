@@ -32,6 +32,7 @@ struct nonogram{
 
   int width,height;
   vector<colour> fields;
+  set<int> given_fields;
   set<colour> colours;
   // indexes:
   // 0 1 2
