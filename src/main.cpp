@@ -23,7 +23,7 @@ int main(){
   
   
   
-  nonogram nono(20,20,colours);
+  nonogram nono(25,25,colours);
   nono.init_randomised(0.5);
   nono.make_solvable();
   nono.save_as_svg("puzzle.svg",false);

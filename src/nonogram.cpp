@@ -103,12 +103,10 @@ void nonogram::save_as_svg(const string& filename,bool solved) const
   
   for(int i=0;i<width*height;++i){
     if(solved || given_fields.count(i)==1){
-      if(fields[i] != WHITE){
-        int x = FIELD_X_START + SQUARE_SIZE*(i%width);
-        int y = FIELD_Y_START + SQUARE_SIZE*(i/width);
-        string style = "style=\"fill:" + fields[i].str() + "\"";
-        file << svg_rectangle(x,y,SQUARE_SIZE,SQUARE_SIZE,style);
-      }
+      int x = FIELD_X_START + SQUARE_SIZE*(i%width);
+      int y = FIELD_Y_START + SQUARE_SIZE*(i/width);
+      string style = "style=\"fill:" + fields[i].str() + "\"";
+      file << svg_rectangle(x,y,SQUARE_SIZE,SQUARE_SIZE,style);
     }
   }
   
@@ -226,7 +224,11 @@ void nonogram::make_solvable()
     if(unsolved_fields.empty()){
       return;
     }
-    given_fields.insert(unsolved_fields[rand() % unsolved_fields.size()]);
+    
+    unsigned before = given_fields.size();
+    while(given_fields.size() < before + 5){
+      given_fields.insert(unsolved_fields[rand() % unsolved_fields.size()]);
+    }
   }
 }
 
