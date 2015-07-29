@@ -10,6 +10,7 @@ using namespace std;
 struct colour{
   int r,g,b;
   colour(int _r,int _g,int _b);
+  colour() = default;
   string str() const;
   bool operator<(const colour& rhs) const;
   bool operator==(const colour& rhs) const;

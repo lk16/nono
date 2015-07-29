@@ -333,62 +333,51 @@ vector<colour> nonogram::sequence_t::solve(const vector<colour>& given) const
   
   assert(given.size() == (unsigned)max_id);
  
-  vector<vector<colour>> possibilities;
-  vector<int> offset;
-  generate_possibilities(&offset,0,&possibilities);
+  vector<colour> state;
+  vector<colour> intersection;
+  bool first_found = true;
   
-  if(possibilities.empty()){
-    return given;
-  }
-  
-  vector<colour> intersection; 
-  
-  bool first = true;
+  generate_possibilities(&state,0,&given,&intersection,&first_found);
 
-  
-  for(auto& p: possibilities){
-
-    if(combi_match(p,given)){
-      if(first){
-        intersection = p;
-        first = false;
-      }
-      else{ 
-        assign_intersection_lhs(intersection,p);
-      }
-    }
-  }
-
-  assert(!first);
-  
-  for(unsigned i=0;i<intersection.size();++i){
-    assert(given[i]==intersection[i] || given[i]==UNKNOWN);
-  }
   return intersection;
 }
 
-void nonogram::sequence_t::generate_possibilities(vector<int>* offset, int move, vector<vector<colour>>* out) const
+void nonogram::sequence_t::generate_possibilities(
+  vector<colour>* state,
+  int move,
+  const vector<colour>* given,
+  vector<colour>* intersection,
+  bool* first_found
+) const
 {
-  if((unsigned)move==seq.size()){
-    if(offset->back() + seq.back().second <= max_id){
-      vector<colour> res(max_id,WHITE);
-      for(unsigned i=0;i<offset->size();++i){
-        for(int j=0;j<seq[i].second;++j){
-          res[(*offset)[i]+j] = seq[i].first;
-        }
-      }
-      out->push_back(res);
-    }
+  int old_size = state->size();
+  
+  if(!combi_match(*state,*given)){
     return;
   }
-  
+  if((unsigned)move == seq.size()){
+    assert(state->size() <= (unsigned)max_id);
+    while(state->size() != (unsigned)max_id){
+      state->push_back(WHITE);
+    }
+    if(*first_found){
+      *first_found = false;
+      *intersection = *state;
+    }
+    else{
+      assert(state->size() == (unsigned)max_id);
+      assign_intersection_lhs(*intersection,*state);
+    }
+    state->resize(old_size);
+    return;    
+  }
+    
   int start;
   if(move==0){
     start = 0;
   }
   else{
-    assert(!offset->empty());
-    start = offset->back() + seq[move-1].second + (seq[move-1].first==seq[move].first ? 1 : 0);
+    start = state->size() + seq[move-1].second + (seq[move-1].first==seq[move].first ? 1 : 0);
   }
   int end = max_id + 1;
   for(unsigned i=move;i<seq.size();++i){
@@ -396,12 +385,17 @@ void nonogram::sequence_t::generate_possibilities(vector<int>* offset, int move,
   }
   
   for(int i=start;i<end;++i){
-    offset->push_back(i);
-    generate_possibilities(offset,move+1,out);
-    offset->pop_back();
+    assert(state->size() <= (unsigned)start);
+    while(state->size() != (unsigned)start){
+      state->push_back(WHITE);
+    }
+    assert(state->size() <= (unsigned)start+seq[i].second);
+    while(state->size() != (unsigned)start+seq[i].second){
+      state->push_back(seq[i].first);
+    }
+    generate_possibilities(state,move+1,given,intersection,first_found);
+    state->resize(old_size);
   }
-
-  
 }
 
 
@@ -409,11 +403,10 @@ void nonogram::sequence_t::generate_possibilities(vector<int>* offset, int move,
 
 bool nonogram::sequence_t::combi_match(const vector<colour>& lhs, const vector<colour>& rhs)
 {
-  assert(lhs.size()==rhs.size());
   vector<colour>::const_iterator lit,rit;
   lit = lhs.begin();
   rit = rhs.begin();
-  while(lit != lhs.end()){
+  while(lit != lhs.end() && rit != rhs.end()){
     if(*lit != *rit && *lit!=UNKNOWN && *rit!=UNKNOWN){
       return false;
     }
