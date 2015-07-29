@@ -1,11 +1,18 @@
 #include "nonogram.hpp"
 
 nonogram::nonogram(int h,int w,const set<colour>& _colours){
+  colours = _colours;
+  set_size(h,w);
+}
+
+void nonogram::set_size(int h, int w)
+{
   fields.assign(w*h,WHITE);
   width = w;
   height = h;
-  colours = _colours;
 }
+
+
 
 
 void nonogram::init_randomised(double chance){
@@ -151,16 +158,9 @@ void nonogram::save_as_svg(const string& filename,bool solved) const
   file.close();
 }
 
-void nonogram::try_solving(vector<colour>& sol) const
+void nonogram::gen_indexes_sequences()
 {
-  sol.assign(width*height,UNKNOWN);
-  for(auto x: given_fields){
-    sol[x] = fields[x];
-  }
- 
-  
-  vector<vector<int>> indexes(width+height);
-  vector<sequence_t> sequences;
+  indexes.assign(width+height,vector<int>());
   
   
   for(int y=0;y<height;++y){
@@ -175,8 +175,18 @@ void nonogram::try_solving(vector<colour>& sol) const
     }
     sequences.push_back(sequence_t(get_col_seq(x),height));
   }
-  
-  
+}
+
+
+
+void nonogram::try_solving(vector<colour>& sol) const
+{
+  sol.assign(width*height,UNKNOWN);
+  for(auto x: given_fields){
+    sol[x] = fields[x];
+  }
+ 
+
   
   
   
@@ -211,6 +221,7 @@ void nonogram::try_solving(vector<colour>& sol) const
 void nonogram::make_solvable()
 {
   vector<colour> solution;
+  gen_indexes_sequences();
   
   while(true){
     try_solving(solution);

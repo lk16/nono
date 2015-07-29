@@ -12,6 +12,10 @@ class nonogram{
     vector<pair<colour,int>> seq;
     int max_id;
     
+    
+    
+
+    
 
     static bool combi_match(const vector<colour>& lhs,const vector<colour>& rhs);
 
@@ -33,6 +37,13 @@ class nonogram{
   int width,height;
   vector<colour> fields;
   set<int> given_fields;
+  
+  // these are assigned with gen_indexes_sequences()
+  vector<vector<int>> indexes;
+  vector<sequence_t> sequences;
+  
+  
+  
   // indexes:
   // 0 1 2
   // 3 4 5
@@ -41,6 +52,14 @@ class nonogram{
   void try_solving(vector<colour>& sol) const;
 
   colour random_colour() const;
+
+  vector<pair<colour,int>> get_col_seq(int x) const;
+  vector<pair<colour,int>> get_row_seq(int y) const;
+
+  void gen_indexes_sequences();
+  void set_size(int h,int w);
+  
+  
   
 public:
    
@@ -49,13 +68,11 @@ public:
   nonogram(int h,int w,const set<colour>& _colours);
   ~nonogram() = default;
   
+  
   void init_randomised(double chance);
   void init_clustered();
   
   
-  
-  vector<pair<colour,int>> get_col_seq(int x) const;
-  vector<pair<colour,int>> get_row_seq(int y) const;
   
   void save_as_svg(const string& filename,bool solved) const;
   

@@ -18,7 +18,8 @@ int main(){
   colours.insert(BLACK);
   colours.insert(WHITE);
   colours.insert(RED);
-  //colours.insert(BLUE);
+  colours.insert(BLUE);
+  colours.insert(GREEN);
   
   
   
