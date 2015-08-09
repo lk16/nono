@@ -13,6 +13,8 @@
 #include <vector>
 #include <map>
 
+#include <json/json.h>
+
 #include "colour.hpp"
 
 using namespace std;

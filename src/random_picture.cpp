@@ -11,6 +11,14 @@ string random_picture()
   
   download_file(url,tmpfile);
   
+  Json::Value Root;
+  Json::Reader jsonreader;
+  
+  ifstream tmpfilestream(tmpfile);
+  
+  jsonreader.parse(tmpfilestream,Root,false);
+  
+  remove(tmpfile.c_str());
   
   return "";
 }
