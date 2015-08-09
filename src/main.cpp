@@ -14,9 +14,7 @@ void seed_well(){
 
 void demo(){
   cout << "Running demo.\n";
-  
-  download_file("http://www.nu.nl","nu");
-  
+  random_picture();
   exit(0);
 }
 
