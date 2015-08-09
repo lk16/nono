@@ -1,5 +1,6 @@
 #include "includes.hpp"
 #include "nonogram.hpp"
+#include "download.hpp"
 
 using namespace std;
 
@@ -9,8 +10,20 @@ void seed_well(){
   srand(t.tv_sec ^ t.tv_usec);
 }
 
+void demo(){
+  cout << "Running demo.\n";
+  
+  download_file("http://www.nu.nl","nu");
+  
+  exit(0);
+}
+
+
+
 
 int main(){
+  demo();
+  
   seed_well();
   
   

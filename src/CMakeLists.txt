@@ -10,6 +10,7 @@ find_package(PkgConfig)
 #pkg_check_modules(GDK_PIXBUF gdk-pixbuf-2.0)
 #pkg_check_modules(GIOMM giomm-2.4)
 #pkg_check_modules(GDKMM gdkmm-2.4)
+pkg_check_modules(CURL libcurl)
 
 set(COMMON_FLAGS
   "-I .. -std=c++0x -pthread -Wall -Wextra -Wfloat-equal -Wno-unused-result -Wshadow -Wstrict-aliasing"
@@ -38,27 +39,8 @@ set(CMAKE_CXX_FLAGS
   #${DEBUG_FLAGS}
 ) 
 
-#include_directories(${CMAKE_CURRENT_BINARY_DIR})
-#include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
-#include_directories(${GTKMM_LIBRARY_DIRS})
-#include_directories(${GTKMM_INCLUDE_DIRS})
-
-#include_directories(${GLIBMM_LIBRARY_DIRS})
-#include_directories(${GLIBMM_INCLUDE_DIRS})
-
-#include_directories(${GDK_PIXBUF_LIBRARY_DIRS})
-#include_directories(${GDK_PIXBUF_INCLUDE_DIRS})
-
-#include_directories(${GTK_PLUS_LIBRARY_DIRS})
-#include_directories(${GTK_PLUS_INCLUDE_DIRS})
-
-#include_directories(${GIOMM_LIBRARY_DIRS})
-#include_directories(${GIOMM_INCLUDE_DIRS})
-
-#include_directories(${GDKMM_LIBRARY_DIRS})
-#include_directories(${GDKMM_INCLUDE_DIRS})
-
+include_directories("/usr/include")
+include_directories(${CURL_INCLUDE_DIRS})
   
 
 
@@ -73,7 +55,5 @@ add_executable(../nono
 )
 
 target_link_libraries(../nono
-  #${GTKMM_LIBRARIES}
-  #${GLIBMM_LIBRARIES}
-  #${GDK_PIXBUF_LIBRARIES}
+ ${CURL_LIBRARIES}
 )

@@ -1,3 +1,17 @@
 http://freeimages.pictures/api/user/1089487859513610/?keyword=sunny%20beach
 https://github.com/open-source-parsers/jsoncpp
 https://packages.debian.org/search?keywords=libjsoncpp-dev
+
+  stringstream sstream;
+  
+  try{
+    Cleanup cleanup;
+    options::Url url(url_str);  
+    Easy request;
+    request.setOpt(url);
+    request.setOpt(cURLpp::Options::WriteStream(&sstream));
+    request.perform();
+  }
+  catch(std::exception &e){
+    cout << "Exception: " << e.what() << endl;
+  }
