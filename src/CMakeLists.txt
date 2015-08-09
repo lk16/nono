@@ -11,6 +11,7 @@ find_package(PkgConfig)
 #pkg_check_modules(GIOMM giomm-2.4)
 #pkg_check_modules(GDKMM gdkmm-2.4)
 pkg_check_modules(CURL libcurl)
+pkg_check_modules(JSONCPP jsoncpp)
 
 set(COMMON_FLAGS
   "-I .. -std=c++0x -pthread -Wall -Wextra -Wfloat-equal -Wno-unused-result -Wshadow -Wstrict-aliasing"
@@ -39,9 +40,10 @@ set(CMAKE_CXX_FLAGS
   #${DEBUG_FLAGS}
 ) 
 
-include_directories("/usr/include")
+#include_directories("/usr/include")
 include_directories(${CURL_INCLUDE_DIRS})
   
+include_directories(${JSONCPP_INCLUDE_DIRS})
 
 
 
@@ -56,4 +58,5 @@ add_executable(../nono
 
 target_link_libraries(../nono
  ${CURL_LIBRARIES}
+ ${JSONCPP_LIBRARIES}
 )

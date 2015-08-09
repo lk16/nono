@@ -1,6 +1,8 @@
+
 #include "includes.hpp"
 #include "nonogram.hpp"
 #include "download.hpp"
+#include "random_picture.hpp"
 
 using namespace std;
 
