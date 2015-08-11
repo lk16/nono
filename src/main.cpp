@@ -24,7 +24,7 @@ void demo(){
 
 int main(){
   seed_well();
-  demo();
+  //demo();
   
   
   set<colour> colours;
@@ -37,7 +37,7 @@ int main(){
   
   
   
-  nonogram nono(15,15,colours);
+  nonogram nono(10,10,colours);
   nono.init_randomised(0.5);
   nono.make_solvable();
   nono.save_as_svg("puzzle.svg",false);
