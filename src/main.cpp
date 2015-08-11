@@ -14,7 +14,8 @@ void seed_well(){
 
 void demo(){
   cout << "Running demo.\n";
-  random_picture();
+  string pic = random_picture("old","man");
+  download_file(pic,"pic.jpg");
   exit(0);
 }
 
@@ -22,9 +23,8 @@ void demo(){
 
 
 int main(){
-  demo();
-  
   seed_well();
+  demo();
   
   
   set<colour> colours;

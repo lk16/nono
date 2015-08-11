@@ -5,4 +5,4 @@
 #include "download.hpp"
 #include "includes.hpp"
 
-string random_picture();
+string random_picture(const string& adjective,const string& noun);

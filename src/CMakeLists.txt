@@ -35,9 +35,9 @@ set(OPTIMISING_FLAGS
 )
 
 set(CMAKE_CXX_FLAGS 
-  ${OPTIMISING_FLAGS}
+  #${OPTIMISING_FLAGS}
   #${OPTIMISED_DEBUG_FLAGS}
-  #${DEBUG_FLAGS}
+  ${DEBUG_FLAGS}
 ) 
 
 #include_directories("/usr/include")
