@@ -15,6 +15,12 @@ string colour::str() const
   return res;
 }
 
+int colour::rgb_total() const
+{
+  return r+g+b;
+}
+
+
 bool colour::operator<(const colour& rhs) const
 {
   if(r!=rhs.r){

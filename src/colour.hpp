@@ -14,6 +14,7 @@ struct colour{
   bool operator<(const colour& rhs) const;
   bool operator==(const colour& rhs) const;
   bool operator!=(const colour& rhs) const;
+  int rgb_total() const;
 };
 
 ostream& operator<<(ostream& lhs,const colour& rhs);

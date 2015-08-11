@@ -129,17 +129,20 @@ void nonogram::save_as_svg(const string& filename,bool solved) const
     file << svg_line(0,y,SEQ_WIDTH+FIELD_WIDTH,y,(i%5==0) ? fatline : thinline);
   }
 
-  
+  const string black_style = "style=\"text-anchor:middle;alignment-baseline=central\" fill=\"black\"";
+  const string white_style = "style=\"text-anchor:middle;alignment-baseline=central\" fill=\"white\"";
+
   
   for(int r=0;r<height;++r){
     vector<pair<colour,int>> seq = get_row_seq(r);
     for(unsigned i=0;i<seq.size();++i){
+      colour the_colour = seq[seq.size()-i-1].first;
       int box_x = SEQ_WIDTH - (SQUARE_SIZE*i) - SQUARE_SIZE;
       int box_y = SEQ_HEIGHT  + (SQUARE_SIZE*r);
-      file << svg_rectangle(box_x+1,box_y+1,SQUARE_SIZE-2,SQUARE_SIZE-2,"fill=\"" + seq[seq.size()-i-1].first.str() + "\""); 
+      file << svg_rectangle(box_x+1,box_y+1,SQUARE_SIZE-2,SQUARE_SIZE-2,"fill=\"" + the_colour.str() + "\""); 
       int x = box_x - (SQUARE_SIZE/2) + SQUARE_SIZE;
       int y = box_y + (SQUARE_SIZE*3/4);
-      string style = "style=\"text-anchor:middle;alignment-baseline=central\" fill=\"black\"";
+      string style = (the_colour.rgb_total() < 200) ? white_style : black_style;
       string text = to_str<int>(seq[seq.size()-i-1].second);
       
       file << svg_text(x,y,text,style);
@@ -149,13 +152,13 @@ void nonogram::save_as_svg(const string& filename,bool solved) const
   for(int c=0;c<width;++c){
     vector<pair<colour,int>> seq = get_col_seq(c);
     for(unsigned i=0;i<seq.size();++i){
+      colour the_colour = seq[seq.size()-i-1].first;
       int box_x = SEQ_WIDTH + (SQUARE_SIZE*c);
       int box_y = SEQ_HEIGHT - (SQUARE_SIZE*i) - SQUARE_SIZE;
-      file << svg_rectangle(box_x+1,box_y+1,SQUARE_SIZE-2,SQUARE_SIZE-2,"fill=\"" + seq[seq.size()-i-1].first.str() + "\""); 
-      
+      file << svg_rectangle(box_x+1,box_y+1,SQUARE_SIZE-2,SQUARE_SIZE-2,"fill=\"" + the_colour.str() + "\""); 
       int x = box_x + (SQUARE_SIZE/2);
       int y = box_y - (SQUARE_SIZE/4) + SQUARE_SIZE;
-      string style = "style=\"text-anchor:middle;alignment-baseline=central\" fill=\"black\"";
+      string style = (the_colour.rgb_total() < 200) ? white_style : black_style;
       string text = to_str<int>(seq[seq.size()-i-1].second);
       file << svg_text(x,y,text,style);
     }
