@@ -315,6 +315,8 @@ nonogram::sequence_t::sequence_t(const vector<pair<colour,int>>& sequence, int _
 
 vector<colour> nonogram::sequence_t::solve(const vector<colour>& given) const
 {
+  assert(given.size() == (unsigned)max_id);
+
   {
     bool found_all = true;
     for(const auto& x:given){
@@ -331,18 +333,36 @@ vector<colour> nonogram::sequence_t::solve(const vector<colour>& given) const
     return vector<colour>(max_id,WHITE);
   }
   
-  assert(given.size() == (unsigned)max_id);
  
   vector<colour> state;
   vector<colour> intersection;
   bool first_found = true;
   
-  generate_possibilities(&state,0,&given,&intersection,&first_found);
+  
+  cout << "seq: ";
+  for(auto x: seq){
+    cout << x.second << " ";
+  }
+  cout << '\n';
+  
+  solve_recursively(&state,0,&given,&intersection,&first_found);
 
+  cout << "intersction: ";
+  for(auto x: intersection){
+    if(x==BLACK){
+      cout << "@ ";
+    }
+    else{
+      cout << "- ";
+    }
+  }
+  cout << '\n';
+  
+  
   return intersection;
 }
 
-void nonogram::sequence_t::generate_possibilities(
+void nonogram::sequence_t::solve_recursively(
   vector<colour>* state,
   int move,
   const vector<colour>* given,
@@ -351,6 +371,18 @@ void nonogram::sequence_t::generate_possibilities(
 ) const
 {
   int old_size = state->size();
+  cout << "state: ";
+  for(auto x: *state){
+    if(x==BLACK){
+      cout << "@ ";
+    }
+    else{
+      cout << "- ";
+    }
+  }
+  cout << '\n';
+  
+  
   
   if(!combi_match(*state,*given)){
     return;
@@ -372,28 +404,25 @@ void nonogram::sequence_t::generate_possibilities(
     return;    
   }
     
-  int start;
-  if(move==0){
-    start = 0;
+  int start = state->size();
+  if(move != 0 && seq[move-1].first==seq[move].first){
+    ++start;
   }
-  else{
-    start = state->size() + seq[move-1].second + (seq[move-1].first==seq[move].first ? 1 : 0);
-  }
+  
   int end = max_id + 1;
   for(unsigned i=move;i<seq.size();++i){
     end -= seq[i].second;
   }
   
   for(int i=start;i<end;++i){
-    assert(state->size() <= (unsigned)start);
-    while(state->size() != (unsigned)start){
+    assert(state->size() <= (unsigned)i);
+    while(state->size() != (unsigned)i){
       state->push_back(WHITE);
     }
-    assert(state->size() <= (unsigned)start+seq[i].second);
-    while(state->size() != (unsigned)start+seq[i].second){
-      state->push_back(seq[i].first);
+    for(int j=0;j<seq[move].second;++j){
+      state->push_back(seq[move].first);
     }
-    generate_possibilities(state,move+1,given,intersection,first_found);
+    solve_recursively(state,move+1,given,intersection,first_found);
     state->resize(old_size);
   }
 }

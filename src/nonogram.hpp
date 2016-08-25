@@ -22,7 +22,7 @@ class nonogram{
     static void assign_intersection_lhs(vector<colour>& lhs,const vector<colour>& rhs);
     
 
-    void generate_possibilities(vector<colour>* res,int move,const vector<colour>* given,vector<colour>* intersection,bool* first_found) const;
+    void solve_recursively(vector<colour>* res,int move,const vector<colour>* given,vector<colour>* intersection,bool* first_found) const;
 
   public:
     sequence_t(const vector<pair<colour,int>>& sequence,int _max_id);

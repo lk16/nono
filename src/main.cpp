@@ -11,15 +11,15 @@ void seed_well(){
 
 
 int main(){
-  seed_well();
+  //seed_well();
   
   
   set<colour> colours;
   colours.insert(BLACK);
   colours.insert(WHITE);
-  colours.insert(RED);
-  colours.insert(BLUE);
-  colours.insert(GREEN);
+  //colours.insert(RED);
+  //colours.insert(BLUE);
+  //colours.insert(GREEN);
   
   
   
